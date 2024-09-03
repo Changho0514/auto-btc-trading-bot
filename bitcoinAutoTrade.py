@@ -36,6 +36,9 @@ def get_current_price(ticker):
 upbit = pyupbit.Upbit(access, secret)
 print("autotrade start")
 
+# bestk 모듈을 사용하여 final_k 값을 가져오기
+final_k = bestk.calculate_final_k()
+
 # 자동매매 시작
 while True:
     try:
@@ -44,11 +47,9 @@ while True:
         end_time = start_time + datetime.timedelta(days=1)
 
         if start_time < now < end_time - datetime.timedelta(seconds=10):
-            target_price = get_target_price("KRW-BTC", 0.21)
+            target_price = get_target_price("KRW-BTC", final_k)
             current_price = get_current_price("KRW-BTC")
-            print("target_price : " + str(target_price))
-            print("current_price : " + str(current_price))
-            print("차이 : " + str(target_price - current_price))
+            
             if target_price < current_price:
                 krw = get_balance("KRW")
                 if krw > 5000:
