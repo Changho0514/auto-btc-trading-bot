@@ -56,6 +56,7 @@ while True:
                     upbit.buy_market_order("KRW-BTC", krw*0.9995)
         else:
             btc = get_balance("BTC")
+            final_k = bestk.calculate_final_k()
             if btc > 0.00006:
                 upbit.sell_market_order("KRW-BTC", btc*0.9995)
         time.sleep(1)
