@@ -1,9 +1,14 @@
 import time
 import pyupbit
 import datetime
+import bestk
+import redis
 
 access = "access"          
 secret = "secret"
+
+# Redis에 연결
+r = redis.StrictRedis(host='localhost', port=6379, db=0)
 
 def get_target_price(ticker, k):
     """변동성 돌파 전략으로 매수 목표가 조회"""
@@ -34,12 +39,13 @@ def get_current_price(ticker):
 
 # 로그인
 upbit = pyupbit.Upbit(access, secret)
-print("autotrade start")
 
 # bestk 모듈을 사용하여 final_k 값을 가져오기
 final_k = bestk.calculate_final_k()
+# Redis에 final_k 값 저장
+r.set('final_k', float(final_k))
 
-# 자동매매 시작
+# 자동매매
 while True:
     try:
         now = datetime.datetime.now()
@@ -57,6 +63,7 @@ while True:
         else:
             btc = get_balance("BTC")
             final_k = bestk.calculate_final_k()
+            r.set('final_k', float(final_k))
             if btc > 0.00006:
                 upbit.sell_market_order("KRW-BTC", btc*0.9995)
         time.sleep(1)
